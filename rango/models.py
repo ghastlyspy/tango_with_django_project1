@@ -3,7 +3,7 @@ from django.template.defaultfilters import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=128, unique=True)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     
     
     def save(self, *args, **kwargs):
@@ -23,3 +23,13 @@ class Page(models.Model):
     views = models.IntegerField(default=0)
     def __str__(self):
         return self.title
+
+class PageForm(forms.ModelForm):
+...
+def clean(self):
+    cleaned_data = self.cleaned_data
+    url = cleaned_data.get('url')
+    if url and not url.startswith('http://'):
+        url = f'http://{url}'
+        cleaned_data['url'] = url
+    return cleaned_data
